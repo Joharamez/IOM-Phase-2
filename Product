@@ -1,0 +1,106 @@
+package src;
+
+public class Product {
+	
+	public int productID; //product ID
+	private String name; //product name
+	private double price; //product price
+	private int stock; 
+	AVLTree <Integer,Integer> reviews = new AVLTree <Integer,Integer> (); //list of reviews
+	
+
+    //default constructor
+    public Product() {
+        this.productID = 0;
+        this.name = "";
+        this.price = 0;
+        this.stock = 0;
+    }
+    
+    //parameterized constructor
+    public Product(int productID, String n, double p, int s) {
+        this.productID = productID;
+        this.name = n;
+        this.price = p;
+        this.stock = s;
+    }
+
+    
+    public int getProductID() {
+        return productID;
+    }
+
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    //method to increase stock by a given amount
+    public void addStock (int stock)
+    {
+        this.stock += stock;
+    }
+    
+    //method to decrease stock by a given amount
+    public void removeStock (int stock)
+    {
+        this.stock -= stock;
+    }
+    
+    //method to add a review to the reviews list
+    public void addReview(Integer review)
+    {
+        reviews.insert(review, review);
+    }
+    
+    //method to remove a review to the reviews list
+    public boolean removeReview(Integer review)
+    {
+    	  return reviews.removeKey(review);
+    }
+    
+   
+    public String toString() {
+        String str =  "\nProduct ID: " + productID + "\nName: " + name + "\nPrice: " + price ;
+        if ( stock == -1)
+            str += "\nProduct is not available";
+        else
+            str += "\nStock:" + stock; 
+        if (!reviews.empty())
+        {
+            str += "\nReviews List:" ;
+            str += reviews;
+        }
+        return str;        
+    }
+    
+    public String getDataToFile()
+    {
+        return productID+ ", " + name + ", " + price + ", " + stock; 
+    }
+    
+}
+   
