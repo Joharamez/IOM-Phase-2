@@ -1,0 +1,117 @@
+package src;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+
+public class Order {
+	   private int orderId;
+	   private int customerReference;
+	   AVLTree <Integer,Integer> products = new AVLTree <Integer,Integer> ();  
+	   private double totalPrice;
+	   private LocalDate date;
+	   public String status; 
+
+	    public Order() {
+	        this.orderId = 0;
+	        this.customerReference = 0;
+	        this.totalPrice = 0;
+	        this.status = "";
+	    }
+
+	    public Order(int orderId, int customerReference, Integer [] productIDs,
+	             double totalPrice, String date, String status) {
+	    this.orderId = orderId;
+	    this.customerReference = customerReference;
+	    this.totalPrice = totalPrice;
+	    this.date = LocalDate.parse(date);
+	    this.status = status;
+
+	    for (int i = 0 ; i < productIDs.length ; i++)
+	        products.insert(productIDs[i], productIDs[i]);
+	}
+
+	    public int getOrderID() {
+	        return orderId;
+	    }
+
+	    public int getCustomerReference() {
+	        return customerReference;
+	    }
+
+	    public AVLTree<Integer,Integer> getProducts() {
+	        return products;
+	    }
+
+	    public double getTotalPrice() {
+	        return totalPrice;
+	    }
+
+	    public LocalDate getDate() {
+	        return date;
+	    }
+
+	    public String getStatus() {
+	        return status;
+	    }
+
+	    public void setOrderID(int orderId) {
+	        this.orderId = orderId;
+	    }
+
+	    public void setCustomerReference(int customerReference) {
+	        this.customerReference = customerReference;
+	    }
+
+	    public void setProducts(int productID) {
+	        this.products.insert(productID, productID);
+	    }
+
+	    public void setTotalPrice(double total_price) {
+	        this.totalPrice = total_price;
+	    }
+
+	    public void setDate(LocalDate date) {
+	        this.date = date;
+	    }
+
+	    public void setStatus(String status) {
+	        this.status = status;
+	    }
+
+	    public void addProduct(Integer product){
+	    	products.insert(product, product);
+	    }
+
+	    public boolean removeProduct(Integer productID) {
+	    	return products.removeKey(productID);
+	    }
+	   
+	    
+	    public String toString() {
+	        String str =  "\nORDERS:" + "Order Id:" + orderId + "\nCustomer Reference:" + customerReference 
+	                + "\nTotal price:" + totalPrice  + "\nStatus:" + status + "\nDate:" + date;
+	        if (!products.empty()) {
+	            str += "\nProducts List:" ;
+	            str += products;
+
+	        }
+	        return str;        
+	    }
+
+	    public String getDataToFile()
+	    {
+	        String str = "";
+	        if ( ! products.empty())
+	        {
+	            str += products;
+	        }
+	        
+	        str = str.replaceAll(", ", "; ");
+	        
+	        return orderId + ", " + customerReference + ", " + str
+	                    + ", " + totalPrice + ", " + date + ", " + status;
+	    }
+	    
+
+}
