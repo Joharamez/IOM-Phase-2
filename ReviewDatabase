@@ -1,0 +1,147 @@
+package src;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class ReviewDatabase {
+    public static Scanner input = new Scanner (System.in);
+    public static LinkedList<Review> reviewList = new LinkedList<Review> ();
+
+
+    public LinkedList<Review> getReviewDatabase ( ) {
+        return reviewList;
+    }
+    
+
+    public ReviewDatabase(String fileName)
+    {
+        
+        try{
+                File file = new File(fileName);
+                Scanner read = new Scanner (file);
+                String line = read.nextLine();
+                
+                while(read.hasNext())
+                {
+                    line = read.nextLine();
+                    String [] data = line.split(","); //CSV FILE              
+                    Review review = new Review(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), data[4] );
+                    reviewList.insert(review);
+                }
+                read.close();
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+    }
+    
+    
+    public Review addReview(int customerID, int productID) {
+        System.out.println("Enter the review ID: ");
+        int reviewID = input.nextInt();
+        
+        while (checkReviewID(reviewID)) //The method would return true if id exists.
+        {
+            System.out.println("Review with the entered ID already registered.\nKindly re-enter the ID.");
+            reviewID = input.nextInt();
+        }        
+        
+        System.out.println("Enter the rating score from 1 to 5: ");
+        int rate = input.nextInt();
+        while ( rate >5 || rate <1) {
+            System.out.println("Kindly re-enter rating score from 1 to 5: ");
+            rate = input.nextInt();
+        }
+
+        System.out.println("Enter comment: ");
+        input.nextLine(); //clears garbage
+        String comment = input.nextLine(); 
+
+        Review review = new Review (reviewID, customerID, customerID, rate, comment);
+        reviewList.findFirst();  
+        reviewList.insert(review);
+        return review;
+    }
+
+ 
+    public void updateReview() {
+       if  (reviewList.empty()) {
+           System.out.println("There is no review history.");
+           return;
+       }
+       
+       Review review = new Review();
+       
+       System.out.println("Enter updated Review ID: ");
+        int reviewID = input.nextInt();
+        
+        while (!checkReviewID(reviewID)) // Will enter the loop if review ID doesn't exist
+        {
+            System.out.println("The review with the entered ID doesn't exist. Kindly re-enter the ID.");
+            reviewID = input.nextInt();
+        }        
+       
+        reviewList.findFirst();
+        while (!reviewList.last()) {
+            if (reviewList.retrieve().getReviewID() == reviewID)
+                break;
+           reviewList.findNext();
+        }
+        if (reviewList.retrieve().getReviewID() == reviewID) //Last element check + Updating at where the current stopped
+        {
+            review = reviewList.retrieve();
+            reviewList.remove(); // We cannot directly modify the element since its only pointing at it, we must remove it, update details, and then insert it back at list.
+            
+            System.out.println("1. update rate");
+            System.out.println("2. update comment");
+            System.out.println("Enter choice ");
+            int choice = input.nextInt();
+
+            switch(choice) {
+                case 1: //Update the rating only.
+                {
+                    System.out.println("Enter the rating score from 1 to 5: ");
+                    int rate = input.nextInt();
+                    while ( rate >5 || rate <1)
+                    {
+                        System.out.println("Kindly re-enter rating score from 1 to 5: ");
+                        rate = input.nextInt();
+                    }
+                    review.setRating(rate);
+                }
+                break;
+
+                case 2: //Update the comment only.
+                {
+                    System.out.println("Enter comment: ");
+                    input.nextLine(); //Clears garbage.
+                    String comment = input.nextLine();
+                    review.setComment(comment);
+                }
+                break;
+            }
+            reviewList.findLast();
+            reviewList.insert(review); //Insert back after modification.
+            System.out.println("Review updated successfully.");
+            System.out.println(reviewList.retrieve());
+        }
+   }
+   
+ 
+    public boolean checkReviewID(int revID) {
+        if (!reviewList.empty()) {
+            reviewList.findFirst();
+            for (int i = 0 ; i<reviewList.size() ; i++) {
+                if (reviewList.retrieve().getReviewID()== revID)
+                    return true;
+                reviewList.findNext();
+            }
+        }
+        return false ; //Review not found.
+    }
+    
+
+    
+}
