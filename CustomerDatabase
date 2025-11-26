@@ -1,0 +1,129 @@
+package src;
+
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class CustomerDatabase {
+
+    public static Scanner input = new Scanner (System.in);
+    public static AVLTree<Integer, Customer> customerIDs = new AVLTree<Integer, Customer> ();
+    public static AVLTree<String, Customer> customerNames = new AVLTree<String, Customer> ();
+   
+
+    public AVLTree<Integer, Customer> getCustomerIDs( )
+    {
+        return customerIDs;
+    }
+    
+
+
+
+    public CustomerDatabase(String fileName)
+    {
+            try{
+                File file = new File(fileName);
+                Scanner read = new Scanner (file);
+                String line = read.nextLine(); //Reads but never uses to get rid of the header.
+                
+                while(read.hasNext())
+                {
+                    line = read.nextLine();
+                    String [] customerData = line.split(","); //Data is stored in CSV (Comma Separated File)
+                    Customer customer = new Customer(Integer.parseInt(customerData[0]),customerData[1], customerData[2] );
+                    customerIDs.insert(customer.getCustomerID(), customer);
+                    customerNames.insert(customer.getName(), customer);
+                }
+                read.close();
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+    }
+  
+
+    public void registerCustomer()
+{
+    	Customer customer = new Customer ();
+
+    	System.out.println("Enter customer's ID: ");
+    	customer.setCustomerID(input.nextInt());
+    
+        while (customerIDs.find(customer.getCustomerID()))
+        {
+            System.out.println("Re-Enter agian, ID already avialable: ");
+            customer.setCustomerID(input.nextInt());
+        }    
+        
+        System.out.println("Enter customer Name : ");
+        String name = input.nextLine();
+        name = input.nextLine();
+        customer.setName(name);
+        
+        System.out.println("Enter customer Email : ");
+        customer.setEmail(input.nextLine());
+
+        customerIDs.insert(customer.getCustomerID(), customer);
+        customerNames.insert(customer.getName(), customer);
+    }
+    
+
+
+    public void orderHistory() {
+    	
+    	   if (customerIDs.empty())
+               System.out.println("No order history.");
+           else
+           {
+               System.out.println("Enter customer ID: ");
+               int customerID = input.nextInt();
+               
+               if (customerIDs.find(customerID))
+               {
+                   if (customerIDs.retrieve().getOrders().empty())
+                       System.out.println("No order history for " + customerIDs.retrieve().getCustomerID());
+                   else
+                   {
+                       System.out.println("Order history: ");
+                       System.out.println(customerIDs.retrieve().getOrders());
+                   }
+               }
+               else
+                   System.out.println("Customer ID doesn't exist.");
+           }
+        
+    }
+    
+
+ 
+        
+    public Customer getCustomerID() {
+            if (customerIDs.empty())
+                System.out.println("empty Customers data");
+            else
+            {
+                System.out.println("Enter customer ID: ");
+                int customerID = input.nextInt();
+
+                if (customerIDs.find(customerID))
+                {
+                    System.out.println(customerIDs.retrieve());
+                    return customerIDs.retrieve();
+                }
+            }
+            
+            System.out.println("No such customer ID");
+            return null;
+    }
+    
+
+    
+    public void printNamesAlphabetically()
+    {
+        customerNames.printKeys();
+    }
+    
+
+}
