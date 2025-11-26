@@ -1,0 +1,13 @@
+package src;
+
+
+public class PQElement<T>
+ {
+    public T data;
+    double priority;
+        
+    public PQElement(T e, double pr){
+                   data = e;
+                   priority = pr;
+   }
+}
