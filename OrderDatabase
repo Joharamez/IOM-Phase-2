@@ -1,0 +1,140 @@
+package src;
+
+import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Date;
+
+public class OrderDatabase {
+	 
+    public static Scanner input = new Scanner (System.in);
+    public static AVLTree <Integer, Order> orders = new AVLTree <Integer, Order> ();
+    
+    
+    public AVLTree <Integer, Order> getOrderDatabase(){
+        return orders;
+    }
+    
+    
+    public OrderDatabase(String fileName, AVLTree<Integer, Customer> customers){
+        try{
+                File file = new File(fileName);
+                Scanner read = new Scanner (file);
+                String line = read.nextLine();
+                
+                while(read.hasNext()){
+                    line = read.nextLine();
+                    String [] ordersData = line.split(","); 
+                    int orderID = Integer.parseInt(ordersData[0]);
+                    int customerID = Integer.parseInt(ordersData[1]);
+                    
+                    String  pp =  ordersData[2].replaceAll("\"", "");
+                    String [] p = pp.split(";");
+                    Integer [] productIDs = new Integer [p.length];
+                    for (int i = 0 ; i< productIDs.length ; i++)
+                        productIDs[i] = new Integer(Integer.parseInt(p[i].trim()));
+                    double price = Double.parseDouble(ordersData[3]);
+                    String date = ordersData[4];
+                    String status = ordersData[5];
+                            
+                    Order order = new Order(orderID, customerID, productIDs, price, date, status);
+                    orders.insert(orderID, order);
+                    
+                    if (customers.find(customerID)){
+                        Customer customer = customers.retrieve();
+                        customer.addOrder(orderID);
+                        customers.update(customer);
+                    }
+                }
+                read.close();
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+     }
+
+   
+    public void cancelOrder(int orderID){
+    	  if ( orders.find(orderID))
+          {
+              if (orders.retrieve().getStatus().compareToIgnoreCase("cancelled") == 0)
+                  System.out.println("Order " + orders.retrieve().getOrderID() + " was cancelled before");
+              else
+              {
+                  Order data = orders.retrieve();
+                  data.setStatus("cancelled");
+                  orders.update(data);
+                  System.out.println("Order " + data.getOrderID() + " hed been cancelled Now");
+              }
+          }
+          else
+              System.out.println("could not find Order ID");
+    }
+    
+
+    public boolean updateOrder(int orderID) {
+    	  if (orders.find(orderID))
+          {
+              if ( orders.retrieve().getStatus().compareToIgnoreCase("cancelled") == 0)
+              {
+                  System.out.println("Order is cancelled, status can't be changed.");
+                  return false;
+              }
+              Order obj = orders.retrieve();
+              String status = obj.getStatus();
+
+              System.out.println("Order status: " + orders.retrieve().getStatus() );
+              System.out.println("Enter new status pending, shipped, or delivered");
+              String str = input.next();  
+
+              while ((str.compareToIgnoreCase("pending") != 0  ) &&
+                      (str.compareToIgnoreCase("shipped") != 0  ) &&
+                      (str.compareToIgnoreCase("delivered") != 0  ))
+              {
+                  System.out.println("Invalid input.");
+                  System.out.println("Enter new status pending, shipped, or delivered");
+                  str = input.next();  
+              }
+
+              obj.setStatus(str);
+              orders.update(obj);
+
+              System.out.println("Order (" + orderID + ") is " + orders.getClass());
+              return true;
+          }
+          
+          System.out.println("Invalid order ID.");
+          return false;
+    }
+    
+       
+    public Order searchOrderID(int orderID) {
+        if (orders.find(orderID))
+            return orders.retrieve();
+        return null;
+
+    }
+
+  
+    public AVLTree<Date, Order> ordersBetweenDates(String date1, String date2) {
+        
+      AVLTree<Date, Order> ordersBetweenDates = new AVLTree<Date, Order>();
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate Ldate1 = LocalDate.parse(date1, formatter);
+        LocalDate Ldate2 = LocalDate.parse(date2, formatter);
+        ordersBetweenDates = orders.intervalSearchDate(Ldate1, Ldate2);
+        
+        return ordersBetweenDates;
+   }
+  
+    public boolean checkOrderID(int orderID) {
+    	return orders.find(orderID);
+    }
+    
+  
+    
+}
