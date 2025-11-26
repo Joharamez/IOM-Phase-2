@@ -1,0 +1,241 @@
+package src;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class ProductDatabase {
+	
+	public static Scanner input = new Scanner (System.in);
+    public static AVLTree<Integer, Product> productsIDs = new AVLTree<Integer, Product> ();
+    public static AVLTree<Integer, Product> removedProducts = new AVLTree<Integer, Product> ();
+    
+    public AVLTree<Integer,Product> getproductsIDs() {
+        return productsIDs;
+    }
+
+    public AVLTree<Integer,Product> getRemovedProducts() {
+        return removedProducts;
+    }
+
+    
+    public ProductDatabase (String fileName) {
+        
+       try{
+                File file = new File(fileName);
+                Scanner read = new Scanner (file);
+                String line = read.nextLine(); //skips header line
+                
+                while(read.hasNext())
+                {
+                    line = read.nextLine();
+                    String [] data = line.split(","); //data is stored in CSV
+                    
+                    int productID = Integer.parseInt(data[0]);
+                    String name =  data[1].trim();//to remove spaces
+                    double price = Double.parseDouble(data[2]);
+                    int stock = Integer.parseInt(data[3]);
+
+                    Product product = new Product(productID, name, price, stock );
+                    productsIDs.insert(productID,product);
+                }
+                read.close();
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());//print error if file not found or corrupted
+            }
+    }
+    
+    public void addProduct()
+    {
+        System.out.println("Enter product ID:");
+        int productID = input.nextInt();
+        while (productsIDs.find(productID))
+        {
+            System.out.println("ID already taken, enter different product ID again:");
+            productID = input.nextInt();
+        }
+        
+        System.out.println("Enter product name:");
+        String name =input.next();
+        
+        System.out.println("Enter product price:");
+        double price = input.nextDouble();
+        
+        System.out.println("Enter product stock:");
+        int stock = input.nextInt();
+        
+        Product product = new Product(productID, name, price, stock);
+        productsIDs.insert(productID,product);
+    }
+    
+    public Product searchProductID() {
+        if (productsIDs.empty()) {
+            System.out.println("Products are Empty");
+        }
+        else {
+            System.out.println("Enter product ID: ");
+            int productID = input.nextInt();
+                        
+            if(productsIDs.find(productID)) {
+                Product product = productsIDs.retrieve();
+                System.out.println(product);
+                return product;
+            }
+        }
+       
+        System.out.println("No product with this ID");
+        return null;
+    }
+    
+    public Product removeProduct() {
+        if (productsIDs.empty()) {
+        	System.out.println("There are no products");
+        }
+        else {
+            System.out.println("Enter product ID: ");
+            int productID = input.nextInt();
+            
+            if (productsIDs.find(productID))
+            {
+                Product product = productsIDs.retrieve();
+                productsIDs.removeKey(productID);
+                product.setStock(0);
+                removedProducts.insert(product.getProductID(), product);
+                System.out.println("Product removed successfully");
+                return product;
+            }
+        System.out.println("No product with this ID");
+        }
+        return null;
+    }
+
+    public Product updateProduct() { 
+        if (productsIDs.empty()) {
+            System.out.println("There are no products");
+        }
+        else {
+            System.out.println("Enter product ID: ");
+            int productID = input.nextInt();
+            
+            if ( productsIDs.find(productID)) {
+                Product p = productsIDs.retrieve();
+                
+                //Display update options
+                System.out.println("1. Update Name");
+                System.out.println("2. Update Price");
+                System.out.println("3. Update Stock");
+                System.out.println("Pick an option: ");
+                int choice = input.nextInt();
+                
+                switch (choice) {
+                    case 1: { //Update Name
+                        System.out.println("New Product Name:");
+                        p.setName(input.next());
+                        //writeToFile();
+                    }
+                    break;
+                    
+                    case 2: { //Update Price
+                        System.out.println("New Price:");
+                        p.setPrice( input.nextDouble());
+                        //writeToFile();
+                    }
+                    break;
+                    
+                    case 3:  { //Update Stock
+                        System.out.println("New Stock:");
+                        int stock = input.nextInt();
+                        p.setStock(stock);
+                        //writeToFile();
+                    }
+                    break;
+                    
+                    default:
+                        System.out.println("Invalid Option");
+                }
+                productsIDs.update(p);
+                return p;
+            }
+        }
+        System.out.println("No product with this ID");
+        return null;
+    }
+
+    public Product searchProductName() { //searches for a product by name
+        if (productsIDs.empty()) 
+            System.out.println("No products available");
+        else {
+            System.out.println("Enter product name:");
+            String name = input.nextLine(); //to handle leftover newline character
+            name = input.nextLine();
+
+            LinkedList < Product> productNames = productsIDs.inOrdertraverseData();
+            
+            if (productNames.empty())
+                System.out.println("No product with this name exists");
+            else
+            {
+            	productNames.findFirst();
+                while (!productNames.last())
+                {
+                    if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0)
+                    {
+                        System.out.println("Product Name Found ");
+                        System.out.println(productNames.retrieve());
+                        return productNames.retrieve();
+                    }
+                    productNames.findNext();
+                }
+                if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0)
+                {
+                    System.out.println("Product Name Found ");
+                    System.out.println(productNames.retrieve());
+                    return productNames.retrieve();
+                }
+            }
+         
+        }
+
+        System.out.println("No product with this name");
+        return null;
+    }
+    
+    public void outOfStock() //displays all products that are out of stock
+    {
+        if (productsIDs.empty())
+            System.out.println("There are no products");
+        
+        else
+        	productsIDs.traverseOutOfStockInOrder();
+
+    }
+
+    public boolean checkProductID( int productID ) //checks if a product ID already exists in the database
+    {
+      return productsIDs.find(productID);
+    }
+    
+
+
+    public Product getProductData ( int productID ) //retrieves a product by its ID 
+    {
+        if (productsIDs.find(productID))
+        	return productsIDs.retrieve();
+       
+        
+        return null;
+    }
+    
+    public LinkedList <Product> getPriceRange( double minPrice, double maxPrice)
+    {
+        LinkedList <Product> data = productsIDs.intervalSearchprice(minPrice, maxPrice);
+        return data;
+    }
+    
+
+    
+    
+
+}
