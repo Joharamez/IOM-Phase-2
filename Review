@@ -1,0 +1,79 @@
+package src;
+
+public class Review {
+    private int reviewID;
+    private int productID;
+    private int customerID;
+    private int ratingScore;
+    private String comment;
+
+    public Review() {
+        this.reviewID = 0;
+        this.productID = 0;
+        this.customerID = 0;
+        this.ratingScore = 0;
+        this.comment = "";
+    }
+
+    public Review(int reviewID, int product, int customer, int rating, String comment) {
+        this.reviewID = reviewID;
+        this.productID = product;
+        this.customerID = customer;
+        this.ratingScore = rating;
+        this.comment = comment;
+    }
+
+    public int getReviewID() {
+        return reviewID;
+    }
+
+    public void setReviewID(int reviewId) {
+        this.reviewID = reviewId;
+    }
+
+    public int getProduct() {
+        return productID;
+    }
+
+    public void setProduct(int product) {
+        this.productID = product;
+    }
+
+    public int getCustomer() {
+        return customerID;
+    }
+
+    public void setCustomer(int customer) {
+        this.customerID = customer;
+    }
+
+    public int getRating() {
+        return ratingScore;
+    }
+
+    public void setRating(int rating) {
+        this.ratingScore = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+ 
+    public String toString() {
+        return "===========\nREVIEW: " + "\nReview ID: " + reviewID + "\nProduct ID: " + productID 
+                + "\nCustomer ID: " + customerID + "\nRating score: " + ratingScore + "\nComment:" + comment;
+    }
+    
+    public String getDataToFile()
+    {
+        return reviewID + ", " + productID + ", " + customerID + ", " + ratingScore + ", " + comment; 
+    }
+    
+    
+    
+}
