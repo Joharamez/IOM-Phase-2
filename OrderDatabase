@@ -19,42 +19,49 @@ public class OrderDatabase {
     }
     
     
-    public OrderDatabase(String fileName, AVLTree<Integer, Customer> customers){
-        try{
-                File file = new File(fileName);
-                Scanner read = new Scanner (file);
-                String line = read.nextLine();
-                
-                while(read.hasNext()){
-                    line = read.nextLine();
-                    String [] ordersData = line.split(","); 
-                    int orderID = Integer.parseInt(ordersData[0]);
-                    int customerID = Integer.parseInt(ordersData[1]);
-                    
-                    String  pp =  ordersData[2].replaceAll("\"", "");
-                    String [] p = pp.split(";");
-                    Integer [] productIDs = new Integer [p.length];
-                    for (int i = 0 ; i< productIDs.length ; i++)
-                        productIDs[i] = new Integer(Integer.parseInt(p[i].trim()));
-                    double price = Double.parseDouble(ordersData[3]);
-                    String date = ordersData[4];
-                    String status = ordersData[5];
-                            
-                    Order order = new Order(orderID, customerID, productIDs, price, date, status);
-                    orders.insert(orderID, order);
-                    
-                    if (customers.find(customerID)){
-                        Customer customer = customers.retrieve();
-                        customer.addOrder(orderID);
-                        customers.update(customer);
-                    }
+    public OrderDatabase(String fileName, AVLTree<Integer, Customer> customers) {
+        try {
+            File file = new File(fileName);
+            Scanner read = new Scanner(file);
+            String line = read.nextLine(); // skip header if present – or first line
+
+            while (read.hasNext()) {
+                line = read.nextLine();
+                String[] ordersData = line.split(",");
+
+              
+                int orderID = Integer.parseInt(ordersData[0].trim());
+                int customerID = Integer.parseInt(ordersData[1].trim());
+
+            
+                String pp = ordersData[2].replaceAll("[\"{}]", "").trim();
+                String[] p = pp.split("[,;\\s]+");
+                Integer[] productIDs = new Integer[p.length];
+                for (int i = 0; i < p.length; i++) {
+                    productIDs[i] = Integer.parseInt(p[i].trim());
                 }
-                read.close();
+
+                double price = Double.parseDouble(ordersData[3].trim());
+                String date = ordersData[4].trim();
+                String status = ordersData[5].trim();
+
+              
+                Order order = new Order(orderID, customerID, productIDs, price, date, status);
+                orders.insert(orderID, order);
+
+           
+                if (customers.find(customerID)) {
+                    Customer customer = customers.retrieve();
+                    customer.addOrder(orderID);
+                    customers.update(customer);
+                }
             }
-            catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-     }
+            read.close();
+
+        } catch (Exception ex) {
+            System.out.println("Error loading orders: " + ex.getMessage());
+        }
+    }
 
    
     public void cancelOrder(int orderID){
