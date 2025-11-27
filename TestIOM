@@ -18,8 +18,8 @@ public class TestIOM {
     public static OrderDatabase orderData = new OrderDatabase("orders.csv" , customerData.getCustomerIDs());
     public static AVLTree<Integer, Order>  orders = orderData.getOrderDatabase();
     
-    public static ReviewDatabase reviewData = new ReviewDatabase("reviews.csv");
-    public static LinkedList<Review> reviews;
+    public static ReviewDatabase reviewData= new ReviewDatabase("reviews.csv", productData.getproductsIDs());
+    public static LinkedList<Review> reviews = reviewData.getReviewDatabase();
 
 
 public static void main(String[]args) {
@@ -36,7 +36,8 @@ public static void main(String[]args) {
 		System.out.println("2.Customers");
 		System.out.println("3.Orders");
 		System.out.println("4.Reviews");
-		System.out.println("5.Exit");
+		System.out.println("5.Exit with saving.");
+		System.out.println("6.Exit without saving.");
 		managerChoice=input.nextInt();
 		
 		switch(managerChoice) { 
@@ -76,7 +77,6 @@ public static void main(String[]args) {
 		        	case 1:// Search by ID
 		                Product productID = productData.searchProductID();
 		                if (productID != null)
-		                    System.out.println(productID);
 		        	break;
 		        	case 2:// Search by name
 		                Product prouctName = productData.searchProductName();
@@ -130,7 +130,7 @@ public static void main(String[]args) {
 		        	break;
 		        }
 				
-			}while (productChoice!=6);
+			}while (productChoice!=10);
 			break;
 			
 		case 2:// Customer Menu
@@ -175,7 +175,7 @@ public static void main(String[]args) {
 		        case 8: //Exit
 		        	break;
 		        }
-			}while(customerChoice!=5);
+			}while(customerChoice!=8);
 			break;
 
 		case 3:// Order Menu
@@ -305,9 +305,35 @@ public static void main(String[]args) {
 	        }
 	        
 			break;
+			
+		case 5:
+			System.out.println("Exit with saving all data to original CSV files");
+
+			customers.LoadToFile("customers.csv");
+			System.out.println("Successfully saved into customers.csv");
+
+			products.LoadToFile("products.csv");
+			System.out.println("Successfully saved into products.csv");
+
+			productData.getRemovedProducts().LoadToFile("Archivedproducts.csv");
+			System.out.println("Successfully saved into Archivedproducts.csv");
+
+			reviews.LoadToFile("reviews.csv");
+			System.out.println("Successfully saved into reviews.csv");
+
+			orders.LoadToFile("orders.csv");
+			System.out.println("Successfully saved into orders.csv");
+			break;
+			
+		case 6:
+			
+			break;
+			
+			
+			
 		
 		}
-	} while (managerChoice!=5);
+	} while (managerChoice!=5 && managerChoice!=6);
 	
 
 
@@ -357,7 +383,7 @@ public static void placeOrder() {
      Customer customer = customers.retrieve();
      customer.addOrder(orderID);
      customers.update(customer);
-     System.out.println("Customer (" + customerID + ") replaced order (" + orderID + ")" );
+     
      
      char answer = 'y';
      while (answer == 'y' || answer == 'Y') { 
@@ -367,7 +393,7 @@ public static void placeOrder() {
          if (products.find(productID))
          {
                  if (products.retrieve().getStock() == 0)
-                     System.out.println("product out stock , try another time");
+                     System.out.println("Product is out stock.");
                  else
                  {
                      Product pp = products.retrieve();
@@ -375,13 +401,13 @@ public static void placeOrder() {
                      products.update(pp);
                      newOrder.addProduct(productID);
                  
-                     System.out.println("product added to order");
+                     System.out.println("Product successfully added your order!");
                      
                      totalPrice += pp.getPrice();
                  }
          }
          else
-             System.out.println("  No such product id");
+             System.out.println("Product ID doesn't exist.");
                  
 
              
@@ -522,7 +548,7 @@ public static double averageRating(int productID) {
 	                }
 	                reviews.findNext();
 	            }
-	            
+                System.out.println("Common Products with a rating above 4 are: ");
 	            pcustomer1.print();
 	            pcustomer2.print();
 	            
@@ -552,7 +578,6 @@ public static double averageRating(int productID) {
 	                }                
 	            
 	                
-	                System.out.println("Common Products with a rating above 4 are: ");
 	                while (AVGrate4to5.length() > 0)
 	                {
 	                    PQElement<Product> product_rate = AVGrate4to5.serve();
@@ -726,7 +751,7 @@ public static double averageRating(int productID) {
      for ( int j = 1 ; j <= 3 && top3Products.length() > 0 ; j++)
      {
          PQElement<Product> top = top3Products.serve();
-         System.out.println("\n"+ j+ "." +top.data.getProductID() 
+         System.out.println("\n"+ j+ ") " +top.data.getProductID() 
                  + " , " + top.data.getName() + " has " + top.priority  + " reviews." );
      }
  }
@@ -755,8 +780,8 @@ public static double averageRating(int productID) {
      for ( int j = 1 ; j <= 3 && top3Products.length() > 0 ; j++)
      {
          PQElement<Product> top = top3Products.serve();
-         System.out.println("\n"+ j+ "." + top.data.getProductID() 
-                 + " , " + top.data.getName() + " has " + top.priority + "average rating." );
+         System.out.println("\n"+ j+ ") " + top.data.getProductID() 
+                 + " , " + top.data.getName() + " has " + top.priority + " average rating." );
      }
  }
  
