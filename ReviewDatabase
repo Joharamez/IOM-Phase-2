@@ -15,7 +15,7 @@ public class ReviewDatabase {
     }
     
 
-    public ReviewDatabase(String fileName)
+    public ReviewDatabase( String fileName, AVLTree<Integer, Product>  products)
     {
         
         try{
@@ -26,9 +26,23 @@ public class ReviewDatabase {
                 while(read.hasNext())
                 {
                     line = read.nextLine();
-                    String [] data = line.split(","); //CSV FILE              
-                    Review review = new Review(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), data[4] );
+                    String [] data = line.split(","); 
+                    int reviewID = Integer.parseInt(data[0].trim());
+                    int productID = Integer.parseInt(data[1].trim());
+                    int customerID = Integer.parseInt(data[2].trim());
+                    int rating =  Integer.parseInt(data[3].trim());
+                    String comment =  data[4];
+                    
+                    Review review = new Review(reviewID, productID, customerID, rating, comment );
                     reviewList.insert(review);
+                    
+    
+                    if (products.find(productID))
+                    {
+                        Product p = products.retrieve();
+                        p.addReview(reviewID);
+                        products.update(p);
+                    }
                 }
                 read.close();
             }
@@ -59,7 +73,7 @@ public class ReviewDatabase {
         input.nextLine(); //clears garbage
         String comment = input.nextLine(); 
 
-        Review review = new Review (reviewID, customerID, customerID, rate, comment);
+        Review review = new Review (reviewID, productID, customerID, rate, comment);
         reviewList.findFirst();  
         reviewList.insert(review);
         return review;
@@ -74,7 +88,7 @@ public class ReviewDatabase {
        
        Review review = new Review();
        
-       System.out.println("Enter updated Review ID: ");
+       System.out.println("Enter the ID of the review you wish to update: ");
         int reviewID = input.nextInt();
         
         while (!checkReviewID(reviewID)) // Will enter the loop if review ID doesn't exist
