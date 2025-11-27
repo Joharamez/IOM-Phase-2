@@ -32,10 +32,10 @@ public class ProductDatabase {
                     line = read.nextLine();
                     String [] data = line.split(","); //data is stored in CSV
                     
-                    int productID = Integer.parseInt(data[0]);
+                    int productID = Integer.parseInt(data[0].trim());
                     String name =  data[1].trim();//to remove spaces
-                    double price = Double.parseDouble(data[2]);
-                    int stock = Integer.parseInt(data[3]);
+                    double price = Double.parseDouble(data[2].trim());
+                    int stock = Integer.parseInt(data[3].trim());
 
                     Product product = new Product(productID, name, price, stock );
                     productsIDs.insert(productID,product);
