@@ -32,7 +32,7 @@ public class CustomerDatabase {
                 {
                     line = read.nextLine();
                     String [] customerData = line.split(","); //Data is stored in CSV (Comma Separated File)
-                    Customer customer = new Customer(Integer.parseInt(customerData[0]),customerData[1], customerData[2] );
+                    Customer customer = new Customer(Integer.parseInt(customerData[0].trim()),customerData[1].trim(), customerData[2].trim() );
                     customerIDs.insert(customer.getCustomerID(), customer);
                     customerNames.insert(customer.getName(), customer);
                 }
