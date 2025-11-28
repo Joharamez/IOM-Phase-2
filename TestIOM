@@ -76,12 +76,9 @@ public static void main(String[]args) {
 		        	switch(searchChoice) {
 		        	case 1:// Search by ID
 		                Product productID = productData.searchProductID();
-		                if (productID != null)
 		        	break;
 		        	case 2:// Search by name
 		                Product prouctName = productData.searchProductName();
-		                if (prouctName != null)
-		                    System.out.println(prouctName);
 		        		break;
 		        	}
 		        	
@@ -498,100 +495,104 @@ public static double averageRating(int productID) {
 
 
  
- public static void commonProducts(int customerID1,int customerID2) {
-	        LinkedList<Integer> pcustomer1 = new LinkedList<Integer> ();
-	        LinkedList <Integer> pcustomer2 = new LinkedList <Integer> ();
-	        
+public static void commonProducts(int customerID1,int customerID2) {
+    LinkedList<Integer> pcustomer1 = new LinkedList<Integer> ();
+    LinkedList <Integer> pcustomer2 = new LinkedList <Integer> ();
+    
 
-	        reviews = reviewData.getReviewDatabase();
-	        
-	        if (!reviews.empty())
-	        {
-	            reviews.findFirst();
-	            for (int i=1 ;i <= reviews.size() ; i++)
-	            {
-	                if (reviews.retrieve().getCustomer() == customerID1 )
-	                {
-	                    pcustomer1.findFirst();
-	                    boolean found1 = false;
-	                    for (int x = 1; x <= pcustomer1.size() ; x++)
-	                    {
-	                        if (pcustomer1.retrieve() == reviews.retrieve().getProduct())
-	                        {
-	                            found1 = true;
-	                            break;
-	                        }
-	                        pcustomer1.findNext();
-	                    }
-	                    pcustomer1.findLast();
-	                    if (!found1 )
-	                        pcustomer1.insert(reviews.retrieve().getProduct());
-	                }
-	                
-	                if (reviews.retrieve().getCustomer() == customerID2 )
-	                {
-	                    pcustomer2.findFirst();
-	                    boolean found2 = false;
-	                    for (int x = 1; x <= pcustomer2.size() ; x++)
-	                    {
-	                        if (pcustomer2.retrieve() == reviews.retrieve().getProduct())
-	                        {
-	                            found2 = true;
-	                            break;
-	                        }
-	                        pcustomer2.findNext();
-	                    }
-	                    
-	                    pcustomer2.findLast();
-	                    if (!found2 )
-	                        pcustomer2.insert(reviews.retrieve().getProduct());
-	                }
-	                reviews.findNext();
-	            }
-                System.out.println("Common Products with a rating above 4 are: ");
-	            pcustomer1.print();
-	            pcustomer2.print();
-	            
-	     
-	            LinkedPQ<Product> AVGrate4to5 = new LinkedPQ<Product> ();
-	            if (! pcustomer1.empty() && ! pcustomer2.empty())
-	            {
-	                pcustomer1.findFirst();
-	                for ( int m=1; m <= pcustomer1.size() ; m++)
-	                {
-	                    int productID = pcustomer1.retrieve();
-	                    pcustomer2.findFirst();
-	                    for (int n = 1 ; n <= pcustomer2.size() ; n++)
-	                    {
-	                        if (productID == pcustomer2.retrieve())
-	                        {
-	                            double AVGrating = averageRating (productID);
-	                            if (AVGrating >= 4)
-	                            {
-	                                Product p = productData.getProductData(productID);
-	                                AVGrate4to5.enqueue(p, AVGrating);
-	                            }
-	                        }
-	                        pcustomer2.findNext();
-	                    }
-	                    pcustomer1.findNext();
-	                }                
-	            
-	                
-	                while (AVGrate4to5.length() > 0)
-	                {
-	                    PQElement<Product> product_rate = AVGrate4to5.serve();
-	                    System.out.println("\nProduct (" + product_rate.data.productID + ") " + product_rate.data.getName() + " with rating " + product_rate.priority );
-	                    System.out.println(product_rate.data);
-	                    
-	                }
-	            }
-	            else
-	                System.out.println("No common products between the customers.");
-	        }
-	        else
-	            System.out.println("Reviews not available for all products.");
-	    }
+    reviews = reviewData.getReviewDatabase();
+    
+    if (!reviews.empty())
+    {
+        reviews.findFirst();
+        for (int i=1 ;i <= reviews.size() ; i++)
+        {
+            if (reviews.retrieve().getCustomer() == customerID1 )
+            {
+                pcustomer1.findFirst();
+                boolean found1 = false;
+                for (int x = 1; x <= pcustomer1.size() ; x++)
+                {
+                    if (pcustomer1.retrieve() == reviews.retrieve().getProduct())
+                    {
+                        found1 = true;
+                        break;
+                    }
+                    pcustomer1.findNext();
+                }
+                pcustomer1.findLast();
+                if (!found1 )
+                    pcustomer1.insert(reviews.retrieve().getProduct());
+            }
+            
+            if (reviews.retrieve().getCustomer() == customerID2 )
+            {
+                pcustomer2.findFirst();
+                boolean found2 = false;
+                for (int x = 1; x <= pcustomer2.size() ; x++)
+                {
+                    if (pcustomer2.retrieve() == reviews.retrieve().getProduct())
+                    {
+                        found2 = true;
+                        break;
+                    }
+                    pcustomer2.findNext();
+                }
+                
+                pcustomer2.findLast();
+                if (!found2 )
+                    pcustomer2.insert(reviews.retrieve().getProduct());
+            }
+            reviews.findNext();
+        }
+        System.out.println("Products with a rating above 4 for each customer are: ");
+        System.out.println("Customer 1: ");
+        pcustomer1.print();
+        System.out.println("Customer 2: ");
+        pcustomer2.print();
+        
+ 
+        LinkedPQ<Product> AVGrate4to5 = new LinkedPQ<Product> ();
+        if (! pcustomer1.empty() && ! pcustomer2.empty())
+        {
+            pcustomer1.findFirst();
+            for ( int m=1; m <= pcustomer1.size() ; m++)
+            {
+                int productID = pcustomer1.retrieve();
+                pcustomer2.findFirst();
+                for (int n = 1 ; n <= pcustomer2.size() ; n++)
+                {
+                    if (productID == pcustomer2.retrieve())
+                    {
+                        double AVGrating = averageRating (productID);
+                        if (AVGrating >= 4)
+                        {
+                            Product p = productData.getProductData(productID);
+                            AVGrate4to5.enqueue(p, AVGrating);
+                        }
+                    }
+                    pcustomer2.findNext();
+                }
+                pcustomer1.findNext();
+            }                
+        
+            
+            while (AVGrate4to5.length() > 0)
+            {
+                PQElement<Product> product_rate = AVGrate4to5.serve();
+                System.out.println("\nThere is common product with ID: " + product_rate.data.productID + " " + product_rate.data.getName() + " with a rating of " + product_rate.priority );
+                System.out.println(product_rate.data);
+                
+            }
+        }
+        if(AVGrate4to5.length()==0)
+            System.out.println("No common products between the customers.");
+    }
+    else
+        System.out.println("Reviews not available for all products.");
+}
+
+
  
 
  public static void customersBasedOnRating()
@@ -603,13 +604,13 @@ public static double averageRating(int productID) {
      int productID =input.nextInt();
      while (!products.find(productID))
      {
-         System.out.println("Product ID unavailable, please reenter");
+         System.out.println("Product ID unavailable, please re-enter:");
          productID =input.nextInt();
      }
 
      if (reviews.empty())
      {
-         System.out.println("No available reviews");
+         System.out.println("No available reviews.");
          return;
      }
      
@@ -624,12 +625,15 @@ public static double averageRating(int productID) {
      if (reviews.retrieve().getProduct() == productID)
          if (customers.find(reviews.retrieve().getCustomer()))
              Rating.enqueue(customers.retrieve(), reviews.retrieve().getRating());
-
-     while ( Rating.length() > 0)
+     
+     
+   
+     
+    	 while ( Rating.length() > 0)
      {
          PQElement pq = Rating.serve();
          System.out.print(pq.data);
-         System.out.println("Rating " + pq.priority);
+         System.out.println(" has rating " + pq.priority);
          System.out.println("");
      }
      
@@ -649,7 +653,7 @@ public static double averageRating(int productID) {
 
      if (reviews.empty())
      {
-         System.out.println("No available reviews");
+         System.out.println("No available reviews.");
          return;
      }
      
