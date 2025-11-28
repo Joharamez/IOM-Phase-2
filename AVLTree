@@ -15,21 +15,21 @@ public class AVLTree<K extends Comparable<K>, T>{
                 AVLNode<K,T> parent; 
                 AVLNode<K,T> left; 
                 AVLNode<K,T> right; 
-                int bf; // balance factor of the node
+                int balanceFactor; 
 
                     
                     public AVLNode() {
                             this.key = null;  
                             this.data = null;
                             this.parent = this.left = this.right = null;
-                            this.bf = 0;
+                            this.balanceFactor = 0;
                     }
 
                     public AVLNode(K key, T data) {
                             this.key = key  ;  
                             this.data = data;
                             this.parent = this.left = this.right = null;
-                            this.bf = 0;
+                            this.balanceFactor = 0;
                     }
 
                     public AVLNode(K key, T data, AVLNode<K,T> p, AVLNode<K,T> l, AVLNode<K,T> r){
@@ -38,27 +38,24 @@ public class AVLTree<K extends Comparable<K>, T>{
                             left = l;
                             right = r;
                             parent = p;
-                            bf =0;
+                            balanceFactor =0;
                     }
 
-                    public AVLNode<K,T> getLeft()
-                    {
+                    public AVLNode<K,T> getLeft() {
                         return left;
                     }
 
-                    public AVLNode<K,T> getRight()
-                    {
+                    public AVLNode<K,T> getRight() {
                         return right;
                     }
 
-                    public T getData()
-                    {
+                    public T getData() {
                         return data;
                     }
                     
-                    @Override
+                  
                     public String toString() {
-                        return "AVL Node{" + "key=" + key + ", data =" + data + '}';
+                        return "AVL Node:" + "key=" + key + ", data =" + data;
                     }
             }
 
@@ -82,24 +79,21 @@ public class AVLTree<K extends Comparable<K>, T>{
 
 
        
-        public void clear()
-        {
+        public void clear() {
             root = curr = null;
             count = 0;
         }
 
        
-        public T retrieve()
-        {
+        public T retrieve() {
             T data =null;
             if (curr != null)
                 data = curr.data;
             return data;
         }
 
-        /
-        public void update(T e)
-        {
+        
+        public void update(T e) {
             if (curr != null)
                 curr.data = e;
         }
@@ -109,8 +103,7 @@ public class AVLTree<K extends Comparable<K>, T>{
                  
                     if (node == null)
                         return null;
-                    else if (node.key.compareTo(key) ==0) 
-                    {
+                    else if (node.key.compareTo(key) ==0) {
                         curr = node;
                         return node.data;
                     } 
@@ -122,37 +115,37 @@ public class AVLTree<K extends Comparable<K>, T>{
         
      
         private void updateBalance(AVLNode<K,T> node) {
-                if (node.bf < -1 || node.bf > 1) {
+                if (node.balanceFactor < -1 || node.balanceFactor > 1) {
                         rebalance(node);
                         return;
                 }
 
                 if (node.parent != null) {
                         if (node == node.parent.left) {
-                                node.parent.bf -= 1;
+                                node.parent.balanceFactor -= 1;
                         } 
 
                         if (node == node.parent.right) {
-                                node.parent.bf += 1;
+                                node.parent.balanceFactor += 1;
                         }
 
-                        if (node.parent.bf != 0) {
+                        if (node.parent.balanceFactor != 0) {
                                 updateBalance(node.parent);
                         }
                 }
         }
 
         
-        void rebalance(AVLNode<K,T> node) {
-                if (node.bf > 0) {
-                        if (node.right.bf < 0) {
+        public void rebalance(AVLNode<K,T> node) {
+                if (node.balanceFactor > 0) {
+                        if (node.right.balanceFactor < 0) {
                                 rightRotate(node.right);
                                 leftRotate(node);
                         } else {
                                 leftRotate(node);
                         }
-                } else if (node.bf < 0) {
-                        if (node.left.bf > 0) {
+                } else if (node.balanceFactor < 0) {
+                        if (node.left.balanceFactor > 0) {
                                 leftRotate(node.left);
                                 rightRotate(node);
                         } else {
@@ -169,7 +162,7 @@ public class AVLTree<K extends Comparable<K>, T>{
         }
 
     
-        void leftRotate(AVLNode<K,T> x) {
+        public void leftRotate(AVLNode<K,T> x) {
             AVLNode<K,T> y = x.right;
             x.right = y.left;
             if (y.left != null) {
@@ -188,12 +181,12 @@ public class AVLTree<K extends Comparable<K>, T>{
             x.parent = y;
 
            
-            x.bf = x.bf - 1 - Math.max(0, y.bf);
-            y.bf = y.bf - 1 + Math.min(0, x.bf);
+            x.balanceFactor = x.balanceFactor - 1 - Math.max(0, y.balanceFactor);
+            y.balanceFactor = y.balanceFactor - 1 + Math.min(0, x.balanceFactor);
         }
 
         
-        void rightRotate(AVLNode<K,T> x) {
+        public void rightRotate(AVLNode<K,T> x) {
                 AVLNode<K,T> y = x.left;
                 x.left = y.right;
                 if (y.right != null) {
@@ -211,8 +204,8 @@ public class AVLTree<K extends Comparable<K>, T>{
                 x.parent = y;
 
                 
-                x.bf = x.bf + 1 - Math.min(0, y.bf);
-                y.bf = y.bf + 1 + Math.max(0, x.bf);
+                x.balanceFactor = x.balanceFactor + 1 - Math.min(0, y.balanceFactor);
+                y.balanceFactor = y.balanceFactor + 1 + Math.max(0, x.balanceFactor);
         }
 
         
@@ -253,31 +246,25 @@ public class AVLTree<K extends Comparable<K>, T>{
     public boolean removeKey(K key) {
         K k1 = key;
         AVLNode<K,T>  p = root;
-        AVLNode<K,T>  q = null; // Parent of p
+        AVLNode<K,T>  q = null; 
 
-        while (p != null) 
-        {
-                if (k1.compareTo(p.key) <0)
-                {
+        while (p != null) {
+                if (k1.compareTo(p.key) <0) {
                     q =p;
                     p = p.left;
                 } 
-                else if (k1.compareTo(p.key) >0)
-                {    
+                else if (k1.compareTo(p.key) >0) {    
                     q = p;
                     p = p.right;
                 }
-                else 
-                { 
+                else { 
                     
-                    if ((p.left != null) && (p.right != null)) 
-                    { 
+                    if ((p.left != null) && (p.right != null)) { 
                         
                         
                         AVLNode<K,T> min = p.right;
                         q = p;
-                        while (min.left != null) 
-                        {
+                        while (min.left != null) {
                             q = min;
                             min = min.left;
                         }
@@ -287,24 +274,20 @@ public class AVLTree<K extends Comparable<K>, T>{
                         p = min;
                                             }
                     
-                    if (p.left != null) 
-                    { 
+                    if (p.left != null) { 
                         
                         p = p.left;
                     } 
-                    else 
-                    { 
+                    else { 
                         
                         p = p.right;
                     }
-                    if (q == null)
-                    { 
+                    if (q == null) { 
                         
                         root = p;
                         this.updateBalance(p);
                     } 
-                    else 
-                    {
+                    else {
                         if (k1.compareTo(q.key) <0)
                             q.left = p;
                         else 
@@ -321,15 +304,14 @@ public class AVLTree<K extends Comparable<K>, T>{
 
  
     
-    @Override
+   
     public String toString() {
         String str = inOrdersTraversal(root );
         str = str.replace(str.substring(str.length()-2), "");
         return "{" + str + "}";
     }
 
-    private String inOrdersTraversal(AVLNode<K, T>  node)
-    {
+    private String inOrdersTraversal(AVLNode<K, T>  node) {
         if (node == null)
             return "" ;
         return (inOrdersTraversal(node.left ) + " "
@@ -338,13 +320,11 @@ public class AVLTree<K extends Comparable<K>, T>{
     }
   
 
-    public void printKeys()
-    {
+    public void printKeys() {
         private_printKeys(root);
     }
     
-    private void private_printKeys(AVLNode<K, T>  node)
-    {
+    private void private_printKeys(AVLNode<K, T>  node) {
         if (node == null)
             return ;
         private_printKeys(node.left);
@@ -354,13 +334,11 @@ public class AVLTree<K extends Comparable<K>, T>{
     }
 
   
-    public void printKeys_Data()
-    {
+    public void printKeys_Data() {
         private_printKeys_Data(root);
     }
     
-    private void private_printKeys_Data(AVLNode<K, T>  node)
-    {
+    private void private_printKeys_Data(AVLNode<K, T>  node) {
         if (node == null)
             return ;
         private_printKeys_Data(node.left);
@@ -372,13 +350,11 @@ public class AVLTree<K extends Comparable<K>, T>{
     }
 
     
-    public void printData()
-    {
+    public void printData() {
         private_printData(root);
     }
     
-    private void private_printData(AVLNode<K, T>  node)
-    {
+    private void private_printData(AVLNode<K, T>  node) {
         if (node == null)
             return ;
         private_printData(node.left);
@@ -388,15 +364,14 @@ public class AVLTree<K extends Comparable<K>, T>{
         
     }
     
-    /
+    
     public LinkedList<T>  inOrdertraverseData() {
         LinkedList<T> data = new LinkedList<T>();
         private_inOrdertraverseData( root , data);
         return data;
     }
 
-    private void  private_inOrdertraverseData(AVLNode<K, T>  node, LinkedList<T> data)
-    {
+    private void  private_inOrdertraverseData(AVLNode<K, T>  node, LinkedList<T> data) {
         if (node == null)
             return ;
         private_inOrdertraverseData(node.left, data );
@@ -405,20 +380,17 @@ public class AVLTree<K extends Comparable<K>, T>{
     }
   
    
-    public LinkedList <T> intervalSearch(K k1, K k2)
-    {
+    public LinkedList <T> intervalSearch(K k1, K k2) {
         LinkedList <T> q = new LinkedList <T>();
         if (root != null)
            rec_intervalSearch (k1 , k2, root , q);
         return q;
     }
     
-    private void rec_intervalSearch (K k1, K k2, AVLNode <K, T> p , LinkedList <T> q)
-    {
+    private void rec_intervalSearch (K k1, K k2, AVLNode <K, T> p , LinkedList <T> q) {
         if (p == null)
             return;
-        else
-        {
+        else {
                 rec_intervalSearch (k1, k2 , p.left , q);
                 if (( p.key.compareTo(k1) >= 0 ) && (p.key.compareTo(k2) <= 0 ))
                     q.insert(p.data);
@@ -428,8 +400,7 @@ public class AVLTree<K extends Comparable<K>, T>{
     }   
     
    
-    public AVLTree <Date,T> intervalSearchDate(LocalDate k1, LocalDate k2)
-    {
+    public AVLTree <Date,T> intervalSearchDate(LocalDate k1, LocalDate k2) {
         AVLTree <Date,T> q = new AVLTree <Date,T>();
         if (root != null)
             if ( root.data instanceof Order )
@@ -441,8 +412,7 @@ public class AVLTree<K extends Comparable<K>, T>{
     {
         if (p == null)
             return;
-        else
-        {
+        else {
                 rec_intervalSearchDate (Ldate1, Ldate2 , p.left , q);
                 if ( p.data instanceof Order )
                     if (((Order) p.data).getDate().isAfter(Ldate1) && ((Order) p.data).getDate().isBefore(Ldate2))
@@ -465,8 +435,7 @@ public class AVLTree<K extends Comparable<K>, T>{
             private_inOrdertraverseOutStock( root);
     }
 
-    private void  private_inOrdertraverseOutStock(AVLNode<K, T>  node)
-    {
+    private void  private_inOrdertraverseOutStock(AVLNode<K, T>  node) {
         if (node == null)
             return ;
         private_inOrdertraverseOutStock(node.left);
@@ -476,20 +445,17 @@ public class AVLTree<K extends Comparable<K>, T>{
         private_inOrdertraverseOutStock(node.right);
     }
   
-    public LinkedList <T> intervalSearchprice(double k1, double k2)
-    {
+    public LinkedList <T> intervalSearchprice(double k1, double k2) {
         LinkedList <T> q = new LinkedList <T>();
         if (( root != null) && ( root.data instanceof Product))
            rec_intervalSearchprice (k1 , k2, root , q);
         return q;
     }
     
-    private void rec_intervalSearchprice (double k1, double k2, AVLNode <K, T> p , LinkedList <T> q)
-    {
+    private void rec_intervalSearchprice (double k1, double k2, AVLNode <K, T> p , LinkedList <T> q) {
         if (p == null)
             return;
-        else
-        {
+        else {
                 rec_intervalSearchprice (k1, k2 , p.left , q);
                 if (p.data instanceof Product) 
                 if ((( (Product) p.data).getPrice() >= k1 ) && ((( Product) p.data).getPrice() <=k2))
@@ -500,8 +466,7 @@ public class AVLTree<K extends Comparable<K>, T>{
     }   
     
  
-    public void LoadToFile ( String fileName)
-    {
+    public void LoadToFile ( String fileName) {
         
         try {
                 FileWriter myWriter = new FileWriter(fileName);
@@ -514,8 +479,7 @@ public class AVLTree<K extends Comparable<K>, T>{
 
     }
     
-    private void private_LoadToFile ( FileWriter myWriter,  AVLNode <K, T>  node) throws IOException
-    {
+    private void private_LoadToFile ( FileWriter myWriter,  AVLNode <K, T>  node) throws IOException  {
         if ( node == null)
             return;
         private_LoadToFile ( myWriter,  node.left);
