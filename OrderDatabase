@@ -83,13 +83,10 @@ public class OrderDatabase {
     
 
     public boolean updateOrder(int orderID) {
-    	  if (orders.find(orderID))
-          {
-              if ( orders.retrieve().getStatus().compareToIgnoreCase("cancelled") == 0)
-              {
+    	  if (orders.find(orderID)) {
+              if ( orders.retrieve().getStatus().compareToIgnoreCase("cancelled") == 0) {
                   System.out.println("Order is cancelled, status can't be changed.");
-                  return false;
-              }
+                  return false; }
               Order obj = orders.retrieve();
               String status = obj.getStatus();
 
@@ -114,8 +111,7 @@ public class OrderDatabase {
           }
           
           System.out.println("Invalid order ID.");
-          return false;
-    }
+          return false; }
     
        
     public Order searchOrderID(int orderID) {
