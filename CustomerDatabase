@@ -53,16 +53,16 @@ public class CustomerDatabase {
     
         while (customerIDs.find(customer.getCustomerID()))
         {
-            System.out.println("Re-Enter again, ID unavailable: ");
+            System.out.println("Re-Enter agian, ID already avialable: ");
             customer.setCustomerID(input.nextInt());
         }    
         
-        System.out.println("Enter customer Name:");
+        System.out.println("Enter customer Name : ");
         String name = input.nextLine();
         name = input.nextLine();
         customer.setName(name);
         
-        System.out.println("Enter customer Email:");
+        System.out.println("Enter customer Email : ");
         customer.setEmail(input.nextLine());
 
         customerIDs.insert(customer.getCustomerID(), customer);
