@@ -580,7 +580,7 @@ public static void commonProducts(int customerID1,int customerID2) {
             while (AVGrate4to5.length() > 0)
             {
                 PQElement<Product> product_rate = AVGrate4to5.serve();
-                System.out.println("\nThere is common product with ID: " + product_rate.data.productID + " " + product_rate.data.getName() + " with a rating of " + product_rate.priority );
+                System.out.println("\nThere is a common product: " + product_rate.data.productID + " " + product_rate.data.getName() + " with a rating of " + product_rate.priority );
                 System.out.println(product_rate.data);
                 
             }
@@ -600,40 +600,38 @@ public static void commonProducts(int customerID1,int customerID2) {
      LinkedPQ<Customer> Rating = new LinkedPQ<Customer> ();
      products = productData.getproductsIDs();
      
-     System.out.println("Enter product ID:");
-     int productID =input.nextInt();
-     while (!products.find(productID))
+     System.out.println("Enter product ID :");
+     int pID =input.nextInt();
+     while ( ! products.find(pID))
      {
-         System.out.println("Product ID unavailable, please re-enter:");
-         productID =input.nextInt();
+         System.out.println("product ID not available, Re-enter again");
+         pID =input.nextInt();
      }
 
-     if (reviews.empty())
+     if ( reviews.empty())
      {
-         System.out.println("No available reviews.");
+         System.out.println("No reviews are available");
          return;
      }
      
      reviews.findFirst();
-     while (!reviews.last())
+     while ( ! reviews.last())
      {
-         if (reviews.retrieve().getProduct() == productID)
+         if (reviews.retrieve().getProduct() == pID )
              if (customers.find(reviews.retrieve().getCustomer()))
                  Rating.enqueue(customers.retrieve(), reviews.retrieve().getRating());
          reviews.findNext();
      }
-     if (reviews.retrieve().getProduct() == productID)
+     if (reviews.retrieve().getProduct() == pID )
          if (customers.find(reviews.retrieve().getCustomer()))
              Rating.enqueue(customers.retrieve(), reviews.retrieve().getRating());
-     
-     
-   
-     
-    	 while ( Rating.length() > 0)
+
+     while ( Rating.length() > 0)
      {
          PQElement pq = Rating.serve();
          System.out.print(pq.data);
-         System.out.println(" has rating " + pq.priority);
+         System.out.println("");
+         System.out.println("Customer has rated the product: " + pq.priority);
          System.out.println("");
      }
      
