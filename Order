@@ -89,7 +89,7 @@ public class Order {
 	   
 	    
 	    public String toString() {
-	        String str =  "\nORDERS:" + "Order Id:" + orderId + "\nCustomer Reference:" + customerReference 
+	        String str =  "\nORDER:" + "\nOrder Id:" + orderId + "\nCustomer Reference:" + customerReference 
 	                + "\nTotal price:" + totalPrice  + "\nStatus:" + status + "\nDate:" + date;
 	        if (!products.empty()) {
 	            str += "\nProducts List:" ;
