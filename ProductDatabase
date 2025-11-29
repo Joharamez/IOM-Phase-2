@@ -175,21 +175,15 @@ public class ProductDatabase {
             
             if (productNames.empty())
                 System.out.println("No product with this name exists");
-            else
-            {
+            else{
             	productNames.findFirst();
-                while (!productNames.last())
-                {
-                    if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0)
-                    {
+                while (!productNames.last()) {
+                    if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0) {
                         System.out.println("Product Name Found ");
                         System.out.println(productNames.retrieve());
-                        return productNames.retrieve();
-                    }
-                    productNames.findNext();
-                }
-                if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0)
-                {
+                        return productNames.retrieve(); }
+                    productNames.findNext();}
+                if (productNames.retrieve().getName().compareToIgnoreCase(name) == 0) {
                     System.out.println("Product Name Found ");
                     System.out.println(productNames.retrieve());
                     return productNames.retrieve();
