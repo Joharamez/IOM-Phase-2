@@ -17,7 +17,7 @@ public class LinkedList<T>{
             data = val;
             next = null;
         }
-     
+        // Setters/Getters...
 
         public T getData() {
             return data;
@@ -140,6 +140,9 @@ public void LoadToFile (String fileName)
             FileWriter myWriter = new FileWriter(fileName);
             
             Node<T> tmp = head;
+            
+             if (fileName.contains("reviews.csv"))
+            	 myWriter.write("reviewId,productId,customerId,rating,comment\n");
  
             while (tmp != null)
             {
