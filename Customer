@@ -65,7 +65,7 @@ public class Customer {
     
     
     public String toString() {
-        String str =  "\nCUSTOMERS:" + "\nCustomer ID: " + customerId + "\nCustomer name: " + name + "\nCustomer email: " + email ;
+        String str =  "\nCUSTOMER:" + "\nCustomer ID: " + customerId + "\nCustomer name: " + name + "\nCustomer email: " + email ;
         if (! orderList.empty()) {
             str += "\nOrder list: " ;
             str += orderList.toString();
